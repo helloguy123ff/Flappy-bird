@@ -7,89 +7,135 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="gameContainer">
-        <div id="bird"></div>
-        <div id="pipeTop" class="pipe"></div>
-        <div id="pipeBottom" class="pipe"></div>
-    </div>
-    <script>const bird = document.getElementById('bird');
-const pipeTop = document.getElementById('pipeTop');
-const pipeBottom = document.getElementById('pipeBottom');
-const gameContainer = document.getElementById('gameContainer');
+    <canvas id="gameCanvas" width="300" height="500"></canvas>
+    <script>
 
-let birdY = 50;
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+let birdY = 250;
 let birdVelocity = 0;
-let gravity = 0.5;
-let pipeX = 300;
-let gap = 120;
+const gravity = 0.5;
+const gap = 120;
+let pipeX = canvas.width;
+let pipeTopHeight = getRandomHeight();
 let score = 0;
-let gameInterval;
-let pipeInterval;
+let isGameOver = false;
 
 document.addEventListener('keydown', () => {
-    birdVelocity = -8;
+    if (!isGameOver) {
+        birdVelocity = -8;
+    } else {
+        resetGame();
+    }
 });
+
+function getRandomHeight() {
+    return Math.floor(Math.random() * (canvas.height - gap - 40)) + 20;
+}
+
+function drawBird() {
+    const birdPixels = [
+        [0, 0, 1, 1, 1, 0, 0],
+        [0, 1, 1, 1, 1, 1, 0],
+        [1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1],
+        [0, 1, 1, 1, 1, 1, 0],
+        [0, 0, 1, 1, 1, 0, 0]
+    ];
+
+    const birdX = 50;
+    const birdSize = 7;
+
+    for (let y = 0; y < birdPixels.length; y++) {
+        for (let x = 0; x < birdPixels[y].length; x++) {
+            if (birdPixels[y][x] === 1) {
+                ctx.fillStyle = '#ff0';
+                ctx.fillRect(birdX + x * birdSize, birdY + y * birdSize, birdSize, birdSize);
+            }
+        }
+    }
+}
+
+function drawPipe(x, height, isTop) {
+    const pipeWidth = 60;
+
+    ctx.fillStyle = '#0f0';
+    if (isTop) {
+        ctx.fillRect(x, 0, pipeWidth, height);
+    } else {
+        ctx.fillRect(x, canvas.height - height, pipeWidth, height);
+    }
+}
 
 function moveBird() {
     birdVelocity += gravity;
     birdY += birdVelocity;
-    bird.style.top = birdY + 'px';
 
-    if (birdY > gameContainer.clientHeight - bird.clientHeight || birdY < 0) {
+    if (birdY > canvas.height - 30 || birdY < 0) {
         endGame();
     }
 }
 
 function movePipes() {
     pipeX -= 2;
-    if (pipeX < -pipeTop.clientWidth) {
-        pipeX = gameContainer.clientWidth;
-        let pipeHeight = Math.random() * (gameContainer.clientHeight - gap);
-        pipeTop.style.height = pipeHeight + 'px';
-        pipeBottom.style.height = (gameContainer.clientHeight - pipeHeight - gap) + 'px';
+    if (pipeX < -60) {
+        pipeX = canvas.width;
+        pipeTopHeight = getRandomHeight();
         score++;
     }
-    pipeTop.style.right = pipeX + 'px';
-    pipeBottom.style.right = pipeX + 'px';
 }
 
 function checkCollision() {
-    const birdRect = bird.getBoundingClientRect();
-    const pipeTopRect = pipeTop.getBoundingClientRect();
-    const pipeBottomRect = pipeBottom.getBoundingClientRect();
+    const birdX = 50;
+    const birdWidth = 7 * 7;
+    const birdHeight = 7 * 7;
 
     if (
-        birdRect.left < pipeTopRect.right &&
-        birdRect.right > pipeTopRect.left &&
-        (birdRect.top < pipeTopRect.bottom || birdRect.bottom > pipeBottomRect.top)
+        (birdX + birdWidth > pipeX && birdX < pipeX + 60) &&
+        (birdY < pipeTopHeight || birdY + birdHeight > canvas.height - (canvas.height - pipeTopHeight - gap))
     ) {
         endGame();
     }
 }
 
 function endGame() {
-    clearInterval(gameInterval);
-    clearInterval(pipeInterval);
-    alert(`Game Over! Pontuação: ${score}`);
-    resetGame();
+    isGameOver = true;
+    ctx.font = '30px Arial';
+    ctx.fillStyle = '#000';
+    ctx.fillText(`Game Over! Score: ${score}`, 10, canvas.height / 2);
 }
 
 function resetGame() {
-    birdY = 50;
+    birdY = 250;
     birdVelocity = 0;
-    pipeX = gameContainer.clientWidth;
+    pipeX = canvas.width;
+    pipeTopHeight = getRandomHeight();
     score = 0;
-    bird.style.top = birdY + 'px';
-    pipeTop.style.right = pipeX + 'px';
-    pipeBottom.style.right = pipeX + 'px';
-    gameInterval = setInterval(() => {
-        moveBird();
-        checkCollision();
-    }, 20);
-    pipeInterval = setInterval(movePipes, 20);
+    isGameOver = false;
+    gameLoop();
+}
+
+function gameLoop() {
+    if (isGameOver) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    moveBird();
+    movePipes();
+    checkCollision();
+
+    drawBird();
+    drawPipe(pipeX, pipeTopHeight, true);
+    drawPipe(pipeX, canvas.height - pipeTopHeight - gap, false);
+
+    requestAnimationFrame(gameLoop);
 }
 
 resetGame();
-</script>
+
+    
+    </script>
 </body>
 </html>
