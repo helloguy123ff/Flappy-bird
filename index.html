@@ -5,11 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My 90s Myspace</title>
 <style>
-  body {
-    background-color: #ffcc00;
-    font-family: 'Comic Sans MS', cursive, sans-serif;
-    color: #000000;
-    text-align: center;
+body {
+    background-color: #000000;
+    color: #00ff00;
+    font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
 }
@@ -17,33 +16,44 @@
 #container {
     width: 80%;
     margin: 0 auto;
-    background-color: #ffffff;
-    border: 5px solid #0000ff;
+    background-color: #000000;
+    border: 5px solid #00ff00;
     padding: 20px;
     box-shadow: 10px 10px 5px #888888;
 }
 
 #header {
-    background-color: #ff6699;
+    background-color: #0000ff;
     padding: 10px;
-    border-bottom: 5px solid #0000ff;
+    border-bottom: 5px solid #00ff00;
+}
+
+#header h1 {
+    margin: 0;
 }
 
 #content {
     margin: 20px 0;
 }
 
+#animations {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
 .animated-gif {
-    margin: 10px;
+    margin: 0 10px;
 }
 
 #interactive {
-    margin-top: 20px;
+    text-align: center;
 }
 
 #cool-button {
-    background-color: #ff6699;
-    border: 2px solid #0000ff;
+    background-color: #ff00ff;
+    color: #000000;
+    border: 2px solid #00ff00;
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
@@ -51,14 +61,14 @@
 }
 
 #cool-button:hover {
-    background-color: #ff3366;
+    background-color: #00ff00;
 }
 
 #popup {
     margin-top: 10px;
-    background-color: #ffff99;
+    background-color: #ffff00;
     padding: 10px;
-    border: 2px solid #0000ff;
+    border: 2px solid #00ff00;
     display: none;
 }
 
@@ -67,9 +77,14 @@
 }
 
 #footer {
-    background-color: #ff6699;
+    background-color: #0000ff;
     padding: 10px;
-    border-top: 5px solid #0000ff;
+    border-top: 5px solid #00ff00;
+    text-align: center;
+}
+
+#footer p {
+    margin: 0;
 }
 
 </style>
@@ -81,8 +96,8 @@
         </div>
         <div id="content">
             <div id="animations">
-                <img src="dancing-baby.gif" alt="Dancing Baby" class="animated-gif">
-                <img src="spinning-logo.gif" alt="Spinning Logo" class="animated-gif">
+                <img src="assets/gifs/dancing-baby.gif" alt="Dancing Baby" class="animated-gif">
+                <img src="assets/gifs/spinning-logo.gif" alt="Spinning Logo" class="animated-gif">
             </div>
             <div id="interactive">
                 <button id="cool-button">Click Me!</button>
@@ -93,6 +108,8 @@
             <p>&copy; 2024 My 90s Myspace</p>
         </div>
     </div>
+   
+
     <script>
       document.addEventListener("DOMContentLoaded", function() {
     const button = document.getElementById('cool-button');
